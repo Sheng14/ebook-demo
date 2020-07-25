@@ -13,7 +13,10 @@
       ref="menuBar"
       :fontSizeList = "fontSizeList"
       :defaultFontSize = "defaultFontSize"
-      @setFontSize = "setFontSize"></MenuBar>
+      @setFontSize = "setFontSize"
+      :themeList = "themeList"
+      :defaultTheme = "defaultTheme"
+      @setTheme = "setTheme"></MenuBar>
   </div>
 </template>
 
@@ -39,10 +42,58 @@ export default {
         { fontSize: 22 },
         { fontSize: 24 }
       ],
-      defaultFontSize: 16 // 默认字号
+      defaultFontSize: 16, // 默认字号
+      themeList: [
+        {
+          name: 'default',
+          style: {
+            body: {
+              'color': '#000',
+              'background': '#fff'
+            }
+          }
+        },
+        {
+          name: 'eye',
+          style: {
+            body: {
+              'color': '#000',
+              'background': '#ceeaba'
+            }
+          }
+        },
+        {
+          name: 'night',
+          style: {
+            body: {
+              'color': '#fff',
+              'background': '#000'
+            }
+          }
+        },
+        {
+          name: 'gold',
+          style: {
+            body: {
+              'color': '#000',
+              'background': 'rgb(241, 236, 226)'
+            }
+          }
+        }
+      ],
+      defaultTheme: 0 // 默认主题的索引
     }
   },
   methods: {
+    setTheme (index) { // 根据索引选择主题
+      this.theme.select(this.themeList[index].name)
+      this.defaultTheme = index // 同时选择后的主题即作为默认主题，方便缓存以为下次启动时的主题
+    },
+    registerTheme () { // 遍历注册每一个主题
+      this.themeList.forEach(theme => {
+        this.theme.register(theme.name, theme.style)
+      })
+    },
     setFontSize (fontSize) { // 接收到子组件传来的方法设置字号大小
       this.defaultFontSize = fontSize // 改变默认字号才能让小球移动
       if (this.theme) {
@@ -57,6 +108,8 @@ export default {
       }) // 生成rendition对象，挂载到id为read的DOM对象
       this.rendition.display() // 渲染电子书
       this.theme = this.rendition.themes // 拿到电子书的模式
+      this.registerTheme() // 调用注册主题的方法
+      this.setTheme(this.defaultTheme) // 调用默认的主题
     }, // 其实这里应该用this而不是let，用this挂载到全局上面才能被别的地方调用访问，否则如prevPage是访问不到rendition！
     prevPage () { // 上一页
       if (this.rendition) {

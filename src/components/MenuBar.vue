@@ -8,17 +8,17 @@
             <div class="icon-wrapper">
                 <span class="icon-progress icon"></span>
             </div>
-            <div class="icon-wrapper">
+            <div class="icon-wrapper" @click="showSetting(1)">
                 <span class="icon-bright icon"></span>
             </div>
-            <div class="icon-wrapper" @click="showSetting">
+            <div class="icon-wrapper" @click="showSetting(0)">
                 <span class="icon-a icon">A</span>
             </div>
         </div>
         </transition>
         <transition name="slide-up">
             <div class="setting-bar" v-show="isSettingShow">
-                <div class="setting-font-size">
+                <div class="setting-font-size" v-if="showTag === 0">
                     <div class="preview" :style="{fontSize: fontSizeList[0].fontSize + 'px'}">A</div>
                     <div class="select">
                         <div class="select-wrapper"
@@ -36,6 +36,14 @@
                     </div>
                     <div class="preview" :style="{fontSize: fontSizeList[fontSizeList.length-1].fontSize + 'px'}">A</div>
                 </div>
+                <div class="setting-theme" v-else-if="showTag === 1">
+                    <div class="setting-theme-item" v-for="(item, index) in themeList" :key="index" @click="setTheme(index)">
+                        <div class="preview"
+                        :style="{background: item.style.body.background}"
+                        :class="{'have-border': item.style.body.background === '#fff'}"></div>
+                        <div class="text" :class="{'selected': index === defaultTheme}">{{item.name}}</div>
+                    </div>
+                </div>
             </div>
         </transition>
     </div>
@@ -49,16 +57,25 @@ export default {
       default: false
     },
     fontSizeList: Array,
-    defaultFontSize: Number
+    defaultFontSize: Number,
+    themeList: Array
   },
+
   data () {
     return {
-      isSettingShow: false
+      isSettingShow: false,
+      showTag: 0, // 表示要展示哪一部分，默认是字号
+      defaultTheme: 0
     }
   },
   methods: {
-    showSetting () { // 点击显示设置框框
+    setTheme (index) { // 修改主题
+      this.$emit('setTheme', index) // 传递给父组件让它改
+      this.defaultTheme = index // 既然主题被修改了，那么这个被修改的就应该是变为默认的主题
+    },
+    showSetting (tag) { // 点击显示设置框框
       this.isSettingShow = true
+      this.showTag = tag
       console.log(this.fontSizeList[0].fontSize)
     },
     hideSetting () { // 隐藏设置框框（留给父组件调用的）
@@ -176,6 +193,34 @@ export default {
                                 border-radius: 50%;
                             }
                         }
+                    }
+                }
+            }
+        }
+        .setting-theme {
+            height: 100%;
+            display: flex;
+            .setting-theme-item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                padding: px2rem(5);
+                box-sizing: border-box;
+                .preview {
+                    flex: 1;
+                    border: none;
+                    box-sizing: border-box;
+                    &.have-border {
+                        border: 1px solid #ccc;
+                    }
+                }
+                .text {
+                    flex: 0 0 px2rem(20);
+                    font-size: px2rem(14);
+                    color: #ccc;
+                    @include center;
+                    &.selected {
+                        color: #333;
                     }
                 }
             }
