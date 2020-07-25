@@ -44,7 +44,7 @@
 <script>
 export default {
   props: {
-    isTitleAndMenuShow: {
+    isTitleAndMenuShow: { // 是否显示菜单栏
       type: Boolean,
       default: false
     },
