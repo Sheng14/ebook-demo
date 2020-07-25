@@ -6,9 +6,6 @@
 # 关于作者
 - github： https://github.com/Sheng14
 - csdn： https://blog.csdn.net/ODST_TheSolverO5
-# ebook-demo
-
-> A Vue.js project
 
 ## Build Setup
 
